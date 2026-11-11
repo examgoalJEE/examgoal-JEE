@@ -1,0 +1,103 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ExamGoal JEE</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial;background:#f1f5f9;color:#172554}
+header{background:#172554;color:white;padding:24px;text-align:center}
+main{max-width:950px;margin:25px auto;padding:15px}
+.card{background:white;padding:22px;margin:15px 0;border-radius:12px;box-shadow:0 3px 12px #0001}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.stat{background:#e0e7ff;padding:15px;border-radius:10px;text-align:center}
+button{background:#4338ca;color:white;border:0;padding:11px 17px;border-radius:7px;cursor:pointer}
+input,select{padding:10px;margin:7px 0;border:1px solid #cbd5e1;border-radius:6px}
+.progress{background:#ddd;border-radius:10px;height:13px}
+.bar{background:#4f46e5;height:13px;width:0%;border-radius:10px}
+.task{padding:9px;border-bottom:1px solid #eee}
+</style>
+</head>
+<body>
+<header>
+<h1>🎯 ExamGoal JEE</h1>
+<p>Your Personal JEE Preparation Dashboard</p>
+</header>
+<main>
+<div class="card">
+<h2>Welcome, Future Engineer!</h2>
+<p>Plan your preparation, track progress and achieve your JEE goals.</p>
+</div>
+
+<div class="stats">
+<div class="stat"><h2 id="total">0</h2>Tasks completed</div>
+<div class="stat"><h2 id="hours">0</h2>Study hours</div>
+<div class="stat"><h2 id="percent">0%</h2>Progress</div>
+</div>
+
+<div class="card">
+<h2>📚 Add Study Task</h2>
+<input id="task" placeholder="Enter chapter or task">
+<select id="subject">
+<option>Physics</option><option>Chemistry</option><option>Mathematics</option>
+</select>
+<input id="time" type="number" min="0" placeholder="Study hours">
+<button onclick="addTask()">Add Task</button>
+<div id="tasks"></div>
+</div>
+
+<div class="card">
+<h2>📊 Preparation Progress</h2>
+<div class="progress"><div class="bar" id="bar"></div></div>
+<p id="message">Start completing your tasks!</p>
+</div>
+
+<div class="card">
+<h2>🎯 Daily JEE Goal</h2>
+<p>Complete your planned tasks every day.</p>
+<button onclick="resetTasks()">Reset Tasks</button>
+</div>
+</main>
+
+<script>
+let tasks=[];
+function addTask(){
+let name=document.getElementById('task').value;
+let subject=document.getElementById('subject').value;
+let hours=Number(document.getElementById('time').value)||0;
+if(!name.trim()){alert('Enter a task');return;}
+tasks.push({name,subject,hours,done:false});
+document.getElementById('task').value='';
+document.getElementById('time').value='';
+render();
+}
+function render(){
+let list=document.getElementById('tasks');
+list.innerHTML='';
+tasks.forEach((t,i)=>{
+let div=document.createElement('div');
+div.className='task';
+let label=document.createElement('label');
+let check=document.createElement('input');
+check.type='checkbox';
+check.checked=t.done;
+check.onchange=()=>{t.done=check.checked;render();};
+label.append(check,document.createTextNode(' '+t.name+' ('+t.subject+') - '+t.hours+' hrs'));
+div.append(label);
+list.append(div);
+});
+let done=tasks.filter(t=>t.done).length;
+let hours=tasks.filter(t=>t.done).reduce((s,t)=>s+t.hours,0);
+let p=tasks.length?Math.round(done/tasks.length*100):0;
+document.getElementById('total').textContent=done;
+document.getElementById('hours').textContent=hours;
+document.getElementById('percent').textContent=p+'%';
+document.getElementById('bar').style.width=p+'%';
+document.getElementById('message').textContent=p===100&&tasks.length?'Excellent work! All tasks completed!':'Keep going! Every chapter counts.';
+}
+function resetTasks(){tasks=[];render();}
+</script>
+</body>
+</html>
